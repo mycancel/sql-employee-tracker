@@ -2,24 +2,18 @@ const mysql = require('mysql2');
 const cTable = require('console.table');
 const inquirer = require('inquirer');
 
-// Creates connection to the database
-// TODO: Create this into a global variable? Or keep as a function?
-const getConnection = () => {
-    const companyDb = mysql.createConnection(
-        {
-          host: 'localhost',
-          user: 'root',
-          password: '',
-          database: 'company_db'
-        },
-    );
-    console.log('Connection recieved.')
-    return companyDb;
-};
 
 // Recieves information from table department
-const viewDepartments = () => { 
-    const companyDb = getConnection();
+const viewDepartments = () => {
+    // Creates connection to the database
+    const companyDb = mysql.createConnection(
+        {
+            host: 'localhost',
+            user: 'root',
+            password: '',
+            database: 'company_db'
+        },
+    );
     companyDb.query('SELECT * FROM department', (err, results) => {
         console.table(results);
     })
@@ -38,8 +32,8 @@ const init = () => {
             ]
         }
     ])
-    .then((choice) => viewDepartments())
-    .catch((err) => console.log(err));
+        .then((choice) => viewDepartments())
+        .catch((err) => console.log(err));
 };
 
 init();
