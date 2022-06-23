@@ -20,19 +20,26 @@ const viewDepartments = () => {
 };
 
 const init = () => {
+    const choices = [
+        {name: 'View All Departments', value: 'department', short: 'View All Departments'},
+        {name: 'View All Roles', value: 'role', short: 'View All Roles'},
+        {name: 'View All Employees', value: 'employee', short: 'View All Employees'},
+        'Quit'
+    ];
     inquirer.prompt([
         {
             type: 'rawlist',
-            name: 'choice',
+            name: 'action',
             message: 'What would you like to do?',
-            choices: [
-                'View All Departments',
-                'View All Roles',
-                'View All Employees',
-            ]
+            choices: choices
         }
     ])
-        .then((choice) => viewDepartments())
+        .then((answer) => {
+            if (answer.action === 'Quit') return '';
+            const index = choices.findIndex((choice) => choice.value === answer.action);
+            // View All choices
+            if (index >= 0 && index <= 2) viewDepartments(answer.action);
+        })
         .catch((err) => console.log(err));
 };
 
