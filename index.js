@@ -1,4 +1,5 @@
 const mysql = require('mysql2');
+const cTable = require('console.table');
 
 // Creates connection to the database
 // TODO: Create this into a global variable? Or keep as a function?
@@ -19,7 +20,7 @@ const getConnection = () => {
 const viewDepartments = () => { 
     const companyDb = getConnection();
     companyDb.query('SELECT * FROM department', (err, results) => {
-        console.log(results);
+        console.table(results);
     })
 };
 
