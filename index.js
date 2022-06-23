@@ -4,7 +4,7 @@ const inquirer = require('inquirer');
 
 
 // Recieves information from table department
-const viewDepartments = () => {
+const viewAll = async (table) => {
     // Creates connection to the database
     const companyDb = mysql.createConnection(
         {
@@ -14,7 +14,7 @@ const viewDepartments = () => {
             database: 'company_db'
         },
     );
-    companyDb.query('SELECT * FROM department', (err, results) => {
+    companyDb.query(`SELECT * FROM ${table}`, (err, results) => {
         console.table(results);
     })
 };
@@ -38,7 +38,7 @@ const init = () => {
             if (answer.action === 'Quit') return '';
             const index = choices.findIndex((choice) => choice.value === answer.action);
             // View All choices
-            if (index >= 0 && index <= 2) viewDepartments(answer.action);
+            if (index >= 0 && index <= 2) viewAll(answer.action);
         })
         .catch((err) => console.log(err));
 };
