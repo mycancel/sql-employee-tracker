@@ -4,7 +4,7 @@ const inquirer = require('inquirer');
 
 
 // Recieves information from table department
-const viewAll = async (table) => {
+const viewAll = (table) => {
     // Creates connection to the database
     const companyDb = mysql.createConnection(
         {
