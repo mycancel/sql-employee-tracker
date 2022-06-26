@@ -44,42 +44,38 @@ const init = () => {
         { name: 'View All Departments', value: 'viewAllDepartments' },
         { name: 'View All Roles', value: 'viewAllRoles' },
         { name: 'View All Employees', value: 'viewAllEmployees' },
-        // { name: 'Add a Department', value: 'addDepartment' },
-        // { name: 'Add a Role', value: 'addRole' },
-        // { name: 'Add an Employee', value: 'addEmployee' },
+        { name: 'Add a Department', value: 'addDepartment' },
+        { name: 'Add a Role', value: 'addRole' },
+        { name: 'Add an Employee', value: 'addEmployee' },
         { name: 'Quit', value: 'Quit'}
     ];
     inquirer.prompt([
         {
-            type: 'rawlist',
+            type: 'list',
             name: 'action',
             message: 'What would you like to do?',
             choices: choices
         }
     ])
     .then((answer) => {
-        if (answer.action === 'Quit') return process.exit();
-        methods[answer.action]();
-        
-        
-        
-        // console.log(answer);
-        // const index = choices.findIndex((choice) => choice.value === answer.action);
-        // console.log(index);
-        // // View All choices
-        // if (index >= 0 && index <= 2) viewAll(answer.action);
-        // // Ask additional questions
-        // if (index >= 3 && index <= 5) askMore(answer.action);
+        const action = answer.action;
+        if (action === 'Quit') return process.exit();
+
+        const index = choices.findIndex((choice) => choice.value === action);
+        // View All choices
+        if (index >= 0 && index <= 2) methods[action]();
+        // Ask additional questions
+        if (index >= 3 && index <= 5) askMore(action);
     })
     .catch((err) => console.log(err));
 };
 
 // Asks for additional information to insert into tables
 const askMore = (table) => {
-    if (table === 'add department') {
+    if (table === 'addDepartment') {
         console.log(table);
         // TODO: Add additional inquirer prompts and call module classes
-    } else if (table === 'add role') {
+    } else if (table === 'addRole') {
         console.log(table);
         // TODO: Add additional inquirer prompts and call module classes
     } else {
