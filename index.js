@@ -52,6 +52,14 @@ const methods = {
             return init();
         })
     },
+    addDepartment(name) {
+        const trimName = name.trim();
+        companyDb.query('INSERT INTO department (name) VALUES (?)', trimName, (err, results) => {
+            if (err) return console.error(err);
+            console.log(`Added ${trimName} into the database`);
+            return init();
+        })
+    },
 };
 
 const init = () => {
@@ -59,7 +67,7 @@ const init = () => {
         { name: 'View All Departments', value: 'viewAllDepartments' },
         { name: 'View All Roles', value: 'viewAllRoles' },
         { name: 'View All Employees', value: 'viewAllEmployees' },
-        // { name: 'Add a Department', value: 'addDepartment' },
+        { name: 'Add a Department', value: 'addDepartment' },
         // { name: 'Add a Role', value: 'addRole' },
         // { name: 'Add an Employee', value: 'addEmployee' },
         { name: 'Quit', value: 'Quit'}
@@ -96,7 +104,7 @@ const askMore = (choice) => {
                 name: 'name',
             }
         ])
-        .then((answers) => console.log(answers))
+        .then((answers) =>  methods[choice](answers.name))
         .catch((err) => console.log(err));
     } else if (choice === 'addRole') {
         console.log(choice);
