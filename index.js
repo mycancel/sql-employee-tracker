@@ -2,21 +2,22 @@ const mysql = require('mysql2');
 const cTable = require('console.table');
 const inquirer = require('inquirer');
 
+// Creates connection to the database
+const companyDb = mysql.createConnection(
+    {
+        host: 'localhost',
+        user: 'root',
+        password: '',
+        database: 'company_db'
+    },
+);
 
 // Recieves and displays all information from table
 const viewAll = (table) => {
-    // Creates connection to the database
-    const companyDb = mysql.createConnection(
-        {
-            host: 'localhost',
-            user: 'root',
-            password: '',
-            database: 'company_db'
-        },
-    );
-    companyDb.query(`SELECT * FROM ${table}`, (err, results) => {
+    companyDb.query(`SELECT * FROM ??`, table, (err, results) => {
         console.table(results);
     })
+    return init();
 };
 
 // Asks for additional information to insert into tables
