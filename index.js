@@ -24,11 +24,12 @@ const methods = {
     // Recieves and displays all information from role table
     viewAllRoles() {
         companyDb.query(`
-        SELECT id, 
+        SELECT role.id, 
         title, 
         salary, 
-        department_id AS department 
+        department.name AS department 
         FROM role
+        JOIN department ON department.id = role.department_id
         `, (err, results) => {
             if (err) return console.error(err);
             console.table(results);
@@ -36,13 +37,15 @@ const methods = {
         })
     },
     // Recieves and displays all information from employee table
+    // TODO: Self Join
     viewAllEmployees() {
         companyDb.query(`
-        SELECT id, 
+        SELECT employee.id,
         CONCAT(first_name, " ", last_name) AS name, 
-        role_id AS role, 
-        manager_id AS manager
+        role.title AS role, 
+        manager_id AS manager 
         FROM employee
+        JOIN role ON role.id = employee.role_id
         `, (err, results) => {
             if (err) return console.error(err);
             console.table(results);
@@ -74,7 +77,7 @@ const init = () => {
         if (action === 'Quit') return process.exit();
 
         const index = choices.findIndex((choice) => choice.value === action);
-        // View All choices
+        // View all data from table
         if (index >= 0 && index <= 2) methods[action]();
         // Ask additional questions
         if (index >= 3 && index <= 5) askMore(action);
