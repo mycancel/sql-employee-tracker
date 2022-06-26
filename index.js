@@ -52,13 +52,34 @@ const methods = {
             return init();
         })
     },
+    // Adds a row to department table
     addDepartment(name) {
-        const trimName = name.trim();
-        companyDb.query('INSERT INTO department (name) VALUES (?)', trimName, (err, results) => {
+        const newDepart = name.trim();
+        companyDb.query('INSERT INTO department (name) VALUES (?)', newDepart, (err, results) => {
             if (err) return console.error(err);
-            console.log(`Added ${trimName} into the database`);
+            console.log(`Added ${newDepart} into the database`);
             return init();
         })
+    },
+    // Converts role inquirer answers from askMore into usable data for addRole
+    getRoleData(answers) {
+        const newTitle = answers.title.trim();
+        const newSalary = parseInt(answers.salary.trim());
+        const newDepart = answers.department.trim();
+        
+        companyDb.query('SELECT id FROM department WHERE name = ?', newDepart , (err, results) => {
+            if (err) return console.error(err);
+            const departId = results[0].id;
+            return this.addRole(newTitle, newSalary, departId)
+        });
+    },
+    // Adds a row to role table
+    addRole(title, salary, id) {
+        companyDb.query('INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)', [title, salary, id], (err, results) => {
+            if (err) return console.error(err);
+            console.log(`Added ${title} into the database`);
+            return init();
+        });
     },
 };
 
@@ -68,7 +89,7 @@ const init = () => {
         { name: 'View All Roles', value: 'viewAllRoles' },
         { name: 'View All Employees', value: 'viewAllEmployees' },
         { name: 'Add a Department', value: 'addDepartment' },
-        // { name: 'Add a Role', value: 'addRole' },
+        { name: 'Add a Role', value: 'addRole' },
         // { name: 'Add an Employee', value: 'addEmployee' },
         { name: 'Quit', value: 'Quit'}
     ];
@@ -96,7 +117,6 @@ const init = () => {
 // Asks for additional information to insert into tables
 const askMore = (choice) => {
     if (choice === 'addDepartment') {
-        // TODO: Add additional inquirer prompts and call module classes
         inquirer.prompt([
             {
                 type: 'input',
@@ -106,9 +126,28 @@ const askMore = (choice) => {
         ])
         .then((answers) =>  methods[choice](answers.name))
         .catch((err) => console.log(err));
+
     } else if (choice === 'addRole') {
-        console.log(choice);
-        // TODO: Add additional inquirer prompts and call module classes
+        inquirer.prompt([
+            {
+                type: 'input',
+                message: 'What is the name of the role?',
+                name: 'title',
+            },
+            {
+                type: 'input',
+                message: 'What is the salary of the role?',
+                name: 'salary',
+            },
+            {
+                type: 'input',
+                message: 'What is the department of the role?',
+                name: 'department',
+            }
+        ])
+        .then((answers) =>  methods['getRoleData'](answers))
+        .catch((err) => console.log(err));
+
     } else {
         console.log(choice);
         // TODO: Add additional inquirer prompts and call module classes
