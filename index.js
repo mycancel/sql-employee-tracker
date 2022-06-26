@@ -12,12 +12,15 @@ const companyDb = mysql.createConnection(
     },
 );
 
-// Recieves and displays all information from table
-const viewAll = (table) => {
-    companyDb.query(`SELECT * FROM ??`, table, (err, results) => {
-        console.table(results);
-    })
-    return init();
+const methods = {
+    // Recieves and displays all information from table
+    viewAll(table) {
+        companyDb.query('SELECT * FROM ??', table, (err, results) => {
+            if (err) return console.error(err);
+            console.table(results);
+        })
+        return init();
+    },
 };
 
 // Asks for additional information to insert into tables
@@ -36,13 +39,13 @@ const askMore = (table) => {
 
 const init = () => {
     const choices = [
-        { name: 'View All Departments', value: 'department', short: 'View All Departments' },
-        { name: 'View All Roles', value: 'role', short: 'View All Roles' },
-        { name: 'View All Employees', value: 'employee', short: 'View All Employees' },
-        { name: 'Add a Department', value: 'add department', short: 'Add a Department' },
-        { name: 'Add a Role', value: 'add role', short: 'Add a Role' },
-        { name: 'Add an Employee', value: 'add employee', short: 'Add an Employee' },
-        'Quit'
+        { name: 'View All Departments', value: 'department' },
+        { name: 'View All Roles', value: 'role' },
+        { name: 'View All Employees', value: 'employee' },
+        // { name: 'Add a Department', value: 'add department' },
+        // { name: 'Add a Role', value: 'add role' },
+        // { name: 'Add an Employee', value: 'add employee' },
+        { name: 'Quit', value: 'Quit'}
     ];
     inquirer.prompt([
         {
