@@ -71,15 +71,23 @@ const init = () => {
 };
 
 // Asks for additional information to insert into tables
-const askMore = (table) => {
-    if (table === 'addDepartment') {
-        console.log(table);
+const askMore = (choice) => {
+    if (choice === 'addDepartment') {
         // TODO: Add additional inquirer prompts and call module classes
-    } else if (table === 'addRole') {
-        console.log(table);
+        inquirer.prompt([
+            {
+                type: 'input',
+                message: 'What is the name of the department?',
+                name: 'name',
+            }
+        ])
+        .then((answers) => console.log(answers))
+        .catch((err) => console.log(err));
+    } else if (choice === 'addRole') {
+        console.log(choice);
         // TODO: Add additional inquirer prompts and call module classes
     } else {
-        console.log(table);
+        console.log(choice);
         // TODO: Add additional inquirer prompts and call module classes
     }
 };
