@@ -15,7 +15,7 @@ const companyDb = mysql.createConnection(
 const methods = {
     // Recieves and displays all information from department table
     viewAllDepartments() {
-        companyDb.query('SELECT * FROM department', (err, results) => {
+        companyDb.query('SELECT id, name FROM department', (err, results) => {
             if (err) return console.error(err);
             console.table(results);
             return init();
@@ -23,7 +23,13 @@ const methods = {
     },
     // Recieves and displays all information from role table
     viewAllRoles() {
-        companyDb.query('SELECT * FROM role', (err, results) => {
+        companyDb.query(`
+        SELECT id, 
+        title, 
+        salary, 
+        department_id AS department 
+        FROM role
+        `, (err, results) => {
             if (err) return console.error(err);
             console.table(results);
             return init();
@@ -31,7 +37,13 @@ const methods = {
     },
     // Recieves and displays all information from employee table
     viewAllEmployees() {
-        companyDb.query('SELECT * FROM employee', (err, results) => {
+        companyDb.query(`
+        SELECT id, 
+        CONCAT(first_name, " ", last_name) AS name, 
+        role_id AS role, 
+        manager_id AS manager
+        FROM employee
+        `, (err, results) => {
             if (err) return console.error(err);
             console.table(results);
             return init();
@@ -44,9 +56,9 @@ const init = () => {
         { name: 'View All Departments', value: 'viewAllDepartments' },
         { name: 'View All Roles', value: 'viewAllRoles' },
         { name: 'View All Employees', value: 'viewAllEmployees' },
-        { name: 'Add a Department', value: 'addDepartment' },
-        { name: 'Add a Role', value: 'addRole' },
-        { name: 'Add an Employee', value: 'addEmployee' },
+        // { name: 'Add a Department', value: 'addDepartment' },
+        // { name: 'Add a Role', value: 'addRole' },
+        // { name: 'Add an Employee', value: 'addEmployee' },
         { name: 'Quit', value: 'Quit'}
     ];
     inquirer.prompt([
