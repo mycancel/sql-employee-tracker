@@ -13,14 +13,65 @@ const companyDb = mysql.createConnection(
 );
 
 const methods = {
-    // Recieves and displays all information from table
-    viewAll(table) {
-        companyDb.query('SELECT * FROM ??', table, (err, results) => {
+    // Recieves and displays all information from department table
+    viewAllDepartments() {
+        companyDb.query('SELECT * FROM department', (err, results) => {
             if (err) return console.error(err);
             console.table(results);
+            return init();
         })
-        return init();
     },
+    // Recieves and displays all information from role table
+    viewAllRoles() {
+        companyDb.query('SELECT * FROM role', (err, results) => {
+            if (err) return console.error(err);
+            console.table(results);
+            return init();
+        })
+    },
+    // Recieves and displays all information from employee table
+    viewAllEmployees() {
+        companyDb.query('SELECT * FROM employee', (err, results) => {
+            if (err) return console.error(err);
+            console.table(results);
+            return init();
+        })
+    },
+};
+
+const init = () => {
+    const choices = [
+        { name: 'View All Departments', value: 'viewAllDepartments' },
+        { name: 'View All Roles', value: 'viewAllRoles' },
+        { name: 'View All Employees', value: 'viewAllEmployees' },
+        // { name: 'Add a Department', value: 'addDepartment' },
+        // { name: 'Add a Role', value: 'addRole' },
+        // { name: 'Add an Employee', value: 'addEmployee' },
+        { name: 'Quit', value: 'Quit'}
+    ];
+    inquirer.prompt([
+        {
+            type: 'rawlist',
+            name: 'action',
+            message: 'What would you like to do?',
+            choices: choices
+        }
+    ])
+    .then((answer) => {
+        if (answer.action === 'Quit') return process.exit();
+        methods[answer.action]();
+        
+        
+        
+        // console.log(answer);
+        // const index = choices.findIndex((choice) => choice.value === answer.action);
+        // console.log(index);
+        // // View All choices
+        // if (index >= 0 && index <= 2) viewAll(answer.action);
+        // // Ask additional questions
+        // if (index >= 3 && index <= 5) askMore(answer.action);
+    })
+    .catch((err) => console.log(err));
 };
 
 // Asks for additional information to insert into tables
@@ -35,37 +86,6 @@ const askMore = (table) => {
         console.log(table);
         // TODO: Add additional inquirer prompts and call module classes
     }
-}
-
-const init = () => {
-    const choices = [
-        { name: 'View All Departments', value: 'department' },
-        { name: 'View All Roles', value: 'role' },
-        { name: 'View All Employees', value: 'employee' },
-        // { name: 'Add a Department', value: 'add department' },
-        // { name: 'Add a Role', value: 'add role' },
-        // { name: 'Add an Employee', value: 'add employee' },
-        { name: 'Quit', value: 'Quit'}
-    ];
-    inquirer.prompt([
-        {
-            type: 'rawlist',
-            name: 'action',
-            message: 'What would you like to do?',
-            choices: choices
-        }
-    ])
-        .then((answer) => {
-            if (answer.action === 'Quit') return '';
-            console.log(answer);
-            const index = choices.findIndex((choice) => choice.value === answer.action);
-            console.log(index);
-            // View All choices
-            if (index >= 0 && index <= 2) viewAll(answer.action);
-            // Ask additional questions
-            if (index >= 3 && index <= 5) askMore(answer.action);
-        })
-        .catch((err) => console.log(err));
 };
 
 init();
