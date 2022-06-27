@@ -96,6 +96,46 @@ const methods = {
             return init();
         });
     },
+    // Queries role information to be passed into promptAddEmploy 
+    // TODO: Fix query so that it console.logs results
+    getManagers(roles) {
+        companyDb.query('SELECT id, CONCAT(first_name + " " + last_name) FROM employee WHERE manager_id = null', (err, results) => {
+            if (err) return console.error(err);
+            const managers = [{name: 'None', value: null}];
+            console.log(results);
+            results.forEach((item) => managers.push({name: item.name, value: item.id}));
+            return this.promptAddEmploy(roles, managers);
+        });
+    },
+    // Prompts inquirer questions for addEmployee
+    promptAddEmploy(roles, managers) {
+        inquirer.prompt([
+            {
+                type: 'input',
+                message: 'What is the first name of the employee?',
+                name: 'first',
+            },
+            {
+                type: 'input',
+                message: 'What is the last name of the employee?',
+                name: 'last',
+            },
+            {
+                type: 'list',
+                message: 'What is the role of the employee?',
+                name: 'role',
+                choices: roles,
+            },
+            {
+                type: 'list',
+                message: 'Who is the manager of the employee?',
+                name: 'manager',
+                choices: managers,
+            },
+        ])
+        .then((answers) =>  this.addEmployee(answers))
+        .catch((err) => console.log(err));
+    },
     // Adds a row to the employee table
     addEmployee(answers) {
         const first = answers.first.trim();
@@ -161,35 +201,17 @@ const askMore = (choice) => {
             if (err) return console.error(err);
             const departments = [];
             results.forEach((item) => departments.push({name: item.name, value: item.id}));
-            methods['promptAddRole'](departments);
+            return methods['promptAddRole'](departments);
         });
 
     } else {
-        // TODO: Add query for roles, and managers 
-        inquirer.prompt([
-            {
-                type: 'input',
-                message: 'What is the first name of the employee?',
-                name: 'first',
-            },
-            {
-                type: 'input',
-                message: 'What is the last name of the employee?',
-                name: 'last',
-            },
-            {
-                type: 'input',
-                message: 'What is the role of the employee?',
-                name: 'role',
-            },
-            {
-                type: 'input',
-                message: 'Who is the manager of the employee?',
-                name: 'manager',
-            },
-        ])
-        .then((answers) =>  methods[choice](answers))
-        .catch((err) => console.log(err));
+        // Queries role information to be passed into getManagers and then promptAddEmploy 
+        companyDb.query('SELECT id, title FROM role', (err, results) => {
+            if (err) return console.error(err);
+            const roles = [];
+            results.forEach((item) => roles.push({name: item.title, value: item.id}));
+            return methods['getManagers'](roles);
+        });
     }
 };
 
