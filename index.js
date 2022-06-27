@@ -62,7 +62,7 @@ const methods = {
         })
     },
     // Converts role inquirer answers from askMore into usable data for addRole
-    getRoleData(answers) {
+    convertRoleData(answers) {
         const newTitle = answers.title.trim();
         const newSalary = parseInt(answers.salary.trim());
         const newDepart = answers.department.trim();
@@ -128,6 +128,7 @@ const askMore = (choice) => {
         .catch((err) => console.log(err));
 
     } else if (choice === 'addRole') {
+
         inquirer.prompt([
             {
                 type: 'input',
@@ -145,7 +146,7 @@ const askMore = (choice) => {
                 name: 'department',
             }
         ])
-        .then((answers) =>  methods['getRoleData'](answers))
+        .then((answers) =>  methods['convertRoleData'](answers))
         .catch((err) => console.log(err));
 
     } else {
