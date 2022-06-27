@@ -12,6 +12,32 @@ const companyDb = mysql.createConnection(
     },
 );
 
+const init = () => {
+    const choices = [
+        { name: 'View All Departments', value: 'viewAllDepartments' },
+        { name: 'View All Roles', value: 'viewAllRoles' },
+        { name: 'View All Employees', value: 'viewAllEmployees' },
+        { name: 'Add a Department', value: 'promptAddDepart' },
+        { name: 'Add a Role', value: 'getDepartments' },
+        { name: 'Add an Employee', value: 'getRoles' },
+        { name: 'Quit', value: 'Quit'}
+    ];
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'action',
+            message: 'What would you like to do?',
+            choices: choices
+        }
+    ])
+    .then((answer) => {
+        const action = answer.action;
+        if (action === 'Quit') return process.exit();
+        else return methods[action]();
+    })
+    .catch((err) => console.log(err));
+};
+
 const methods = {
     // Recieves and displays all information from department table
     viewAllDepartments() {
@@ -21,6 +47,7 @@ const methods = {
             return init();
         })
     },
+
     // Recieves and displays all information from role table
     viewAllRoles() {
         companyDb.query(`
@@ -36,6 +63,7 @@ const methods = {
             return init();
         })
     },
+
     // Recieves and displays all information from employee table
     viewAllEmployees() {
         companyDb.query(`
@@ -52,6 +80,7 @@ const methods = {
             return init();
         })
     },
+
     // Prompts inquirer questions for addDepartment
     promptAddDepart(){
         inquirer.prompt([
@@ -73,8 +102,9 @@ const methods = {
             return init();
         })
     },
+
+    // Queries department information to be passed into promptAddRole
     getDepartments(){
-        // Queries department information to be passed into promptAddRole
         companyDb.query('SELECT id, name FROM department', (err, results) => {
             if (err) return console.error(err);
             const departments = [];
@@ -117,8 +147,9 @@ const methods = {
             return init();
         });
     },
+
+    // Queries role information to be passed into getManagers and then promptAddEmploy 
     getRoles(){
-        // Queries role information to be passed into getManagers and then promptAddEmploy 
         companyDb.query('SELECT id, title FROM role', (err, results) => {
             if (err) return console.error(err);
             const roles = [];
@@ -177,32 +208,6 @@ const methods = {
             return init();
         });
     }
-};
-
-const init = () => {
-    const choices = [
-        { name: 'View All Departments', value: 'viewAllDepartments' },
-        { name: 'View All Roles', value: 'viewAllRoles' },
-        { name: 'View All Employees', value: 'viewAllEmployees' },
-        { name: 'Add a Department', value: 'promptAddDepart' },
-        { name: 'Add a Role', value: 'getDepartments' },
-        { name: 'Add an Employee', value: 'getRoles' },
-        { name: 'Quit', value: 'Quit'}
-    ];
-    inquirer.prompt([
-        {
-            type: 'list',
-            name: 'action',
-            message: 'What would you like to do?',
-            choices: choices
-        }
-    ])
-    .then((answer) => {
-        const action = answer.action;
-        if (action === 'Quit') return process.exit();
-        else return methods[action]();
-    })
-    .catch((err) => console.log(err));
 };
 
 init();
