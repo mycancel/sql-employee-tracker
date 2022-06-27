@@ -54,27 +54,31 @@ const methods = {
     },
     // Adds a row to department table
     addDepartment(name) {
-        const newDepart = name.trim();
-        companyDb.query('INSERT INTO department (name) VALUES (?)', newDepart, (err, results) => {
+        const department = name.trim();
+        companyDb.query('INSERT INTO department (name) VALUES (?)', department, (err, results) => {
             if (err) return console.error(err);
-            console.log(`Added ${newDepart} into the database`);
+            console.log(`Added ${department} into the database`);
             return init();
         })
     },
-    // Converts role inquirer answers from askMore into usable data for addRole
-    convertRoleData(answers) {
-        const newTitle = answers.title.trim();
-        const newSalary = parseInt(answers.salary.trim());
-        const newDepart = answers.department.trim();
+    // // Converts role inquirer answers from askMore into usable data for addRole
+    // convertRoleData(answers) {
+    //     const newTitle = answers.title.trim();
+    //     const newSalary = parseInt(answers.salary.trim());
+    //     const departId = parseInt(answers.department);
         
-        companyDb.query('SELECT id FROM department WHERE name = ?', newDepart , (err, results) => {
-            if (err) return console.error(err);
-            const departId = results[0].id;
-            return this.addRole(newTitle, newSalary, departId)
-        });
-    },
+    //     companyDb.query('SELECT id FROM department WHERE name = ?', newDepart , (err, results) => {
+    //         if (err) return console.error(err);
+    //         const departId = results[0].id;
+    //         return this.addRole(newTitle, newSalary, departId)
+    //     });
+    // },
     // Adds a row to role table
-    addRole(title, salary, id) {
+    addRole(answers) {
+        const title = answers.title.trim();
+        const salary = parseInt(answers.salary.trim());
+        const id = parseInt(answers.department);
+
         companyDb.query('INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)', [title, salary, id], (err, results) => {
             if (err) return console.error(err);
             console.log(`Added ${title} into the database`);
@@ -83,14 +87,14 @@ const methods = {
     },
     // Adds a row to the employee table
     addEmployee(answers) {
-        const newFirst = answers.first.trim();
-        const newLast = answers.last.trim();
+        const first = answers.first.trim();
+        const last = answers.last.trim();
         const roleId = parseInt(answers.role);
         const managerId = parseInt(answers.manager);
 
-        companyDb.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [newFirst, newLast, roleId, managerId], (err, results) => {
+        companyDb.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [first, last, roleId, managerId], (err, results) => {
             if (err) return console.error(err);
-            console.log(`Added ${title} into the database`);
+            console.log(`Added ${first + ' ' + last} into the database`);
             return init();
         });
     }
