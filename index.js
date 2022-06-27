@@ -21,7 +21,7 @@ const init = () => {
         { name: 'Add a Role', value: 'getDepartments' },
         { name: 'Add an Employee', value: 'getRoles' },
         { name: 'Updated an Employee', value: 'getEmployees' },
-        { name: 'Quit', value: 'Quit'}
+        { name: 'Quit', value: 'Quit' }
     ];
     inquirer.prompt([
         {
@@ -31,58 +31,15 @@ const init = () => {
             choices: choices
         }
     ])
-    .then((answer) => {
-        const action = answer.action;
-        if (action === 'Quit') return process.exit();
-        else return methods[action]();
-    })
-    .catch((err) => console.log(err));
+        .then((answer) => {
+            const action = answer.action;
+            if (action === 'Quit') return process.exit();
+            else return methods[action]();
+        })
+        .catch((err) => console.log(err));
 };
 
 const methods = {
-    // Queries employee information to be passed into getEmployRole and promptUpdateEmploy
-    getEmployees() {
-        companyDb.query('SELECT id, first_name, last_name FROM employee', (err, results) => {
-            if (err) return console.error(err);
-            const employees = [];
-            results.forEach((item) => employees.push({name: item.first_name + ' ' + item.last_name, value: item.id}));
-            return this.getEmployRole(employees);
-        });
-    },
-    // Queries role information to be passed into promptUpdateEmploy
-    getEmployRole(employees){
-        companyDb.query('SELECT id, title FROM role', (err, results) => {
-            if (err) return console.error(err);
-            const roles = [];
-            results.forEach((item) => roles.push({name: item.title, value: item.id}));
-            return this.promptUpdateEmploy(employees, roles);
-        });
-    },
-    // Prompts inquirer questions for updateEmploy
-    promptUpdateEmploy(employees, roles){
-        inquirer.prompt([
-            {
-                type: 'list',
-                message: 'Which employee\'s role do you want to update?',
-                name: 'employee',
-                choices: employees,
-            },
-            {
-                type: 'list',
-                message: 'What is the employee\'s new role?',
-                name: 'role',
-                choices: roles,
-            }
-        ])
-        .then((answers) =>  this.updateEmploy(answers.employee, answers.role))
-        .catch((err) => console.log(err));
-    },
-    // Updates role of employee in employee table
-    updateEmploy(employee, role){
-        console.log(employee, role);
-        return init();
-    },
-
     // Recieves and displays all information from department table
     viewAllDepartments() {
         companyDb.query('SELECT id, name FROM department', (err, results) => {
@@ -126,7 +83,7 @@ const methods = {
     },
 
     // Prompts inquirer questions for addDepartment
-    promptAddDepart(){
+    promptAddDepart() {
         inquirer.prompt([
             {
                 type: 'input',
@@ -134,8 +91,8 @@ const methods = {
                 name: 'name',
             }
         ])
-        .then((answers) =>  this.addDepartment(answers.name))
-        .catch((err) => console.log(err));
+            .then((answers) => this.addDepartment(answers.name))
+            .catch((err) => console.log(err));
     },
     // Adds a row to department table
     addDepartment(name) {
@@ -148,16 +105,16 @@ const methods = {
     },
 
     // Queries department information to be passed into promptAddRole
-    getDepartments(){
+    getDepartments() {
         companyDb.query('SELECT id, name FROM department', (err, results) => {
             if (err) return console.error(err);
             const departments = [];
-            results.forEach((item) => departments.push({name: item.name, value: item.id}));
+            results.forEach((item) => departments.push({ name: item.name, value: item.id }));
             return this.promptAddRole(departments);
         });
     },
     // Prompts inquirer questions for addRole
-    promptAddRole(departments){
+    promptAddRole(departments) {
         inquirer.prompt([
             {
                 type: 'input',
@@ -176,8 +133,8 @@ const methods = {
                 choices: departments,
             }
         ])
-        .then((answers) =>  this.addRole(answers))
-        .catch((err) => console.log(err));
+            .then((answers) => this.addRole(answers))
+            .catch((err) => console.log(err));
     },
     // Adds a row to role table
     addRole(answers) {
@@ -193,11 +150,11 @@ const methods = {
     },
 
     // Queries role information to be passed into getManagers and then promptAddEmploy 
-    getRoles(){
+    getRoles() {
         companyDb.query('SELECT id, title FROM role', (err, results) => {
             if (err) return console.error(err);
             const roles = [];
-            results.forEach((item) => roles.push({name: item.title, value: item.id}));
+            results.forEach((item) => roles.push({ name: item.title, value: item.id }));
             return this.getManagers(roles);
         });
     },
@@ -205,8 +162,8 @@ const methods = {
     getManagers(roles) {
         companyDb.query('SELECT id, first_name, last_name FROM employee WHERE manager_id IS NULL', (err, results) => {
             if (err) return console.error(err);
-            const managers = [{name: 'None', value: null}];
-            results.forEach((item) => managers.push({name: item.first_name + ' ' + item.last_name, value: item.id}));
+            const managers = [{ name: 'None', value: null }];
+            results.forEach((item) => managers.push({ name: item.first_name + ' ' + item.last_name, value: item.id }));
             return this.promptAddEmploy(roles, managers);
         });
     },
@@ -236,8 +193,8 @@ const methods = {
                 choices: managers,
             },
         ])
-        .then((answers) =>  this.addEmployee(answers))
-        .catch((err) => console.log(err));
+            .then((answers) => this.addEmployee(answers))
+            .catch((err) => console.log(err));
     },
     // Adds a row to the employee table
     addEmployee(answers) {
@@ -251,7 +208,53 @@ const methods = {
             console.log(`Added ${first + ' ' + last} into the database\n`);
             return init();
         });
-    }
+    },
+
+    // Queries employee information to be passed into getEmployRole and promptUpdateEmploy
+    getEmployees() {
+        companyDb.query('SELECT id, first_name, last_name FROM employee', (err, results) => {
+            if (err) return console.error(err);
+            const employees = [];
+            results.forEach((item) => employees.push({ name: item.first_name + ' ' + item.last_name, value: item.id }));
+            return this.getEmployRole(employees);
+        });
+    },
+    // Queries role information to be passed into promptUpdateEmploy
+    getEmployRole(employees) {
+        companyDb.query('SELECT id, title FROM role', (err, results) => {
+            if (err) return console.error(err);
+            const roles = [];
+            results.forEach((item) => roles.push({ name: item.title, value: item.id }));
+            return this.promptUpdateEmploy(employees, roles);
+        });
+    },
+    // Prompts inquirer questions for updateEmploy
+    promptUpdateEmploy(employees, roles) {
+        inquirer.prompt([
+            {
+                type: 'list',
+                message: 'Which employee\'s role do you want to update?',
+                name: 'employee',
+                choices: employees,
+            },
+            {
+                type: 'list',
+                message: 'What is the employee\'s new role?',
+                name: 'role',
+                choices: roles,
+            }
+        ])
+            .then((answers) => this.updateEmploy(answers.employee, answers.role))
+            .catch((err) => console.log(err));
+    },
+    // Updates role of employee in employee table
+    updateEmploy(employee, role) {
+        companyDb.query('UPDATE employee SET role_id = ? WHERE id = ?', [role, employee], (err, results) => {
+            if (err) return console.error(err);
+            console.log(`Updated employee in the database\n`);
+            return init();
+        })
+    },
 };
 
 init();
