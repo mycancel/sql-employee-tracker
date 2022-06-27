@@ -81,6 +81,19 @@ const methods = {
             return init();
         });
     },
+    // Adds a row to the employee table
+    addEmployee(answers) {
+        const newFirst = answers.first.trim();
+        const newLast = answers.last.trim();
+        const roleId = parseInt(answers.role);
+        const managerId = parseInt(answers.manager);
+
+        companyDb.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [newFirst, newLast, roleId, managerId], (err, results) => {
+            if (err) return console.error(err);
+            console.log(`Added ${title} into the database`);
+            return init();
+        });
+    }
 };
 
 const init = () => {
