@@ -60,7 +60,26 @@ const methods = {
     },
     // Prompts inquirer questions for updateEmploy
     promptUpdateEmploy(employees, roles){
-        console.log(employees, roles);
+        inquirer.prompt([
+            {
+                type: 'list',
+                message: 'Which employee\'s role do you want to update?',
+                name: 'employee',
+                choices: employees,
+            },
+            {
+                type: 'list',
+                message: 'What is the employee\'s new role?',
+                name: 'role',
+                choices: roles,
+            }
+        ])
+        .then((answers) =>  this.updateEmploy(answers.employee, answers.role))
+        .catch((err) => console.log(err));
+    },
+    // Updates role of employee in employee table
+    updateEmploy(employee, role){
+        console.log(employee, role);
         return init();
     },
 
