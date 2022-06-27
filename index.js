@@ -37,15 +37,15 @@ const methods = {
         })
     },
     // Recieves and displays all information from employee table
-    // TODO: Self Join
     viewAllEmployees() {
         companyDb.query(`
-        SELECT employee.id,
-        CONCAT(first_name, " ", last_name) AS name, 
+        SELECT e.id,
+        CONCAT(e.first_name, " ", e.last_name) AS name, 
         role.title AS role, 
-        manager_id AS manager 
-        FROM employee
-        JOIN role ON role.id = employee.role_id
+        CONCAT(m.first_name, " ", m.last_name) AS manager_name
+        FROM employee e
+        LEFT JOIN role ON role.id = e.role_id
+        LEFT JOIN employee m ON e.manager_id = m.id
         `, (err, results) => {
             if (err) return console.error(err);
             console.table(results);
