@@ -29,7 +29,7 @@ const methods = {
         salary, 
         department.name AS department 
         FROM role
-        JOIN department ON department.id = role.department_id
+        LEFT JOIN department ON department.id = role.department_id
         `, (err, results) => {
             if (err) return console.error(err);
             console.table(results);
