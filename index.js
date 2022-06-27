@@ -90,7 +90,7 @@ const init = () => {
         { name: 'View All Employees', value: 'viewAllEmployees' },
         { name: 'Add a Department', value: 'addDepartment' },
         { name: 'Add a Role', value: 'addRole' },
-        // { name: 'Add an Employee', value: 'addEmployee' },
+        { name: 'Add an Employee', value: 'addEmployee' },
         { name: 'Quit', value: 'Quit'}
     ];
     inquirer.prompt([
@@ -128,7 +128,7 @@ const askMore = (choice) => {
         .catch((err) => console.log(err));
 
     } else if (choice === 'addRole') {
-
+        // TODO: add query for departments
         inquirer.prompt([
             {
                 type: 'input',
@@ -150,8 +150,31 @@ const askMore = (choice) => {
         .catch((err) => console.log(err));
 
     } else {
-        console.log(choice);
-        // TODO: Add additional inquirer prompts and call module classes
+        // TODO: Add query for roles, and managers 
+        inquirer.prompt([
+            {
+                type: 'input',
+                message: 'What is the first name of the employee?',
+                name: 'first',
+            },
+            {
+                type: 'input',
+                message: 'What is the last name of the employee?',
+                name: 'last',
+            },
+            {
+                type: 'input',
+                message: 'What is the role of the employee?',
+                name: 'role',
+            },
+            {
+                type: 'input',
+                message: 'Who is the manager of the employee?',
+                name: 'manager',
+            },
+        ])
+        .then((answers) =>  methods[choice](answers))
+        .catch((err) => console.log(err));
     }
 };
 
