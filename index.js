@@ -20,6 +20,7 @@ const init = () => {
         { name: 'Add a Department', value: 'promptAddDepart' },
         { name: 'Add a Role', value: 'getDepartments' },
         { name: 'Add an Employee', value: 'getRoles' },
+        { name: 'Updated an Employee', value: 'getEmployees' },
         { name: 'Quit', value: 'Quit'}
     ];
     inquirer.prompt([
@@ -39,6 +40,30 @@ const init = () => {
 };
 
 const methods = {
+    // Queries employee information to be passed into getEmployRole and promptUpdateEmploy
+    getEmployees() {
+        companyDb.query('SELECT id, first_name, last_name FROM employee', (err, results) => {
+            if (err) return console.error(err);
+            const employees = [];
+            results.forEach((item) => employees.push({name: item.first_name + ' ' + item.last_name, value: item.id}));
+            return this.getEmployRole(employees);
+        });
+    },
+    // Queries role information to be passed into promptUpdateEmploy
+    getEmployRole(employees){
+        companyDb.query('SELECT id, title FROM role', (err, results) => {
+            if (err) return console.error(err);
+            const roles = [];
+            results.forEach((item) => roles.push({name: item.title, value: item.id}));
+            return this.promptUpdateEmploy(employees, roles);
+        });
+    },
+    // Prompts inquirer questions for updateEmploy
+    promptUpdateEmploy(employees, roles){
+        console.log(employees, roles);
+        return init();
+    },
+
     // Recieves and displays all information from department table
     viewAllDepartments() {
         companyDb.query('SELECT id, name FROM department', (err, results) => {
