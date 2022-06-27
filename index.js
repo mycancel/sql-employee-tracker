@@ -97,13 +97,11 @@ const methods = {
         });
     },
     // Queries role information to be passed into promptAddEmploy 
-    // TODO: Fix query so that it console.logs results
     getManagers(roles) {
-        companyDb.query('SELECT id, CONCAT(first_name + " " + last_name) FROM employee WHERE manager_id = null', (err, results) => {
+        companyDb.query('SELECT id, first_name, last_name FROM employee WHERE manager_id IS NULL', (err, results) => {
             if (err) return console.error(err);
             const managers = [{name: 'None', value: null}];
-            console.log(results);
-            results.forEach((item) => managers.push({name: item.name, value: item.id}));
+            results.forEach((item) => managers.push({name: item.first_name + ' ' + item.last_name, value: item.id}));
             return this.promptAddEmploy(roles, managers);
         });
     },
