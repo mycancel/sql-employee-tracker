@@ -52,14 +52,35 @@ const methods = {
             return init();
         })
     },
+    // Prompts inquirer questions for addDepartment
+    promptAddDepart(){
+        inquirer.prompt([
+            {
+                type: 'input',
+                message: 'What is the name of the department?',
+                name: 'name',
+            }
+        ])
+        .then((answers) =>  this.addDepartment(answers.name))
+        .catch((err) => console.log(err));
+    },
     // Adds a row to department table
     addDepartment(name) {
         const department = name.trim();
         companyDb.query('INSERT INTO department (name) VALUES (?)', department, (err, results) => {
             if (err) return console.error(err);
-            console.log(`Added ${department} into the database`);
+            console.log(`Added ${department} into the database\n`);
             return init();
         })
+    },
+    getDepartments(){
+        // Queries department information to be passed into promptAddRole
+        companyDb.query('SELECT id, name FROM department', (err, results) => {
+            if (err) return console.error(err);
+            const departments = [];
+            results.forEach((item) => departments.push({name: item.name, value: item.id}));
+            return this.promptAddRole(departments);
+        });
     },
     // Prompts inquirer questions for addRole
     promptAddRole(departments){
@@ -92,8 +113,17 @@ const methods = {
 
         companyDb.query('INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)', [title, salary, id], (err, results) => {
             if (err) return console.error(err);
-            console.log(`Added ${title} into the database`);
+            console.log(`Added ${title} into the database\n`);
             return init();
+        });
+    },
+    getRoles(){
+        // Queries role information to be passed into getManagers and then promptAddEmploy 
+        companyDb.query('SELECT id, title FROM role', (err, results) => {
+            if (err) return console.error(err);
+            const roles = [];
+            results.forEach((item) => roles.push({name: item.title, value: item.id}));
+            return this.getManagers(roles);
         });
     },
     // Queries role information to be passed into promptAddEmploy 
@@ -143,7 +173,7 @@ const methods = {
 
         companyDb.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [first, last, roleId, managerId], (err, results) => {
             if (err) return console.error(err);
-            console.log(`Added ${first + ' ' + last} into the database`);
+            console.log(`Added ${first + ' ' + last} into the database\n`);
             return init();
         });
     }
@@ -154,9 +184,9 @@ const init = () => {
         { name: 'View All Departments', value: 'viewAllDepartments' },
         { name: 'View All Roles', value: 'viewAllRoles' },
         { name: 'View All Employees', value: 'viewAllEmployees' },
-        { name: 'Add a Department', value: 'addDepartment' },
-        { name: 'Add a Role', value: 'addRole' },
-        { name: 'Add an Employee', value: 'addEmployee' },
+        { name: 'Add a Department', value: 'promptAddDepart' },
+        { name: 'Add a Role', value: 'getDepartments' },
+        { name: 'Add an Employee', value: 'getRoles' },
         { name: 'Quit', value: 'Quit'}
     ];
     inquirer.prompt([
@@ -170,47 +200,9 @@ const init = () => {
     .then((answer) => {
         const action = answer.action;
         if (action === 'Quit') return process.exit();
-
-        const index = choices.findIndex((choice) => choice.value === action);
-        // View all data from table
-        if (index >= 0 && index <= 2) methods[action]();
-        // Ask additional questions
-        if (index >= 3 && index <= 5) askMore(action);
+        else return methods[action]();
     })
     .catch((err) => console.log(err));
-};
-
-// Asks for additional information to insert into tables
-const askMore = (choice) => {
-    if (choice === 'addDepartment') {
-        inquirer.prompt([
-            {
-                type: 'input',
-                message: 'What is the name of the department?',
-                name: 'name',
-            }
-        ])
-        .then((answers) =>  methods[choice](answers.name))
-        .catch((err) => console.log(err));
-
-    } else if (choice === 'addRole') {
-        // Queries department information to be passed into promptAddRole
-        companyDb.query('SELECT id, name FROM department', (err, results) => {
-            if (err) return console.error(err);
-            const departments = [];
-            results.forEach((item) => departments.push({name: item.name, value: item.id}));
-            return methods['promptAddRole'](departments);
-        });
-
-    } else {
-        // Queries role information to be passed into getManagers and then promptAddEmploy 
-        companyDb.query('SELECT id, title FROM role', (err, results) => {
-            if (err) return console.error(err);
-            const roles = [];
-            results.forEach((item) => roles.push({name: item.title, value: item.id}));
-            return methods['getManagers'](roles);
-        });
-    }
 };
 
 init();
