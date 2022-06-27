@@ -61,18 +61,29 @@ const methods = {
             return init();
         })
     },
-    // // Converts role inquirer answers from askMore into usable data for addRole
-    // convertRoleData(answers) {
-    //     const newTitle = answers.title.trim();
-    //     const newSalary = parseInt(answers.salary.trim());
-    //     const departId = parseInt(answers.department);
-        
-    //     companyDb.query('SELECT id FROM department WHERE name = ?', newDepart , (err, results) => {
-    //         if (err) return console.error(err);
-    //         const departId = results[0].id;
-    //         return this.addRole(newTitle, newSalary, departId)
-    //     });
-    // },
+    // Prompts inquirer questions for addRole
+    promptAddRole(departments){
+        inquirer.prompt([
+            {
+                type: 'input',
+                message: 'What is the name of the role?',
+                name: 'title',
+            },
+            {
+                type: 'input',
+                message: 'What is the salary of the role?',
+                name: 'salary',
+            },
+            {
+                type: 'list',
+                message: 'What is the department of the role?',
+                name: 'department',
+                choices: departments,
+            }
+        ])
+        .then((answers) =>  this.addRole(answers))
+        .catch((err) => console.log(err));
+    },
     // Adds a row to role table
     addRole(answers) {
         const title = answers.title.trim();
@@ -145,26 +156,13 @@ const askMore = (choice) => {
         .catch((err) => console.log(err));
 
     } else if (choice === 'addRole') {
-        // TODO: add query for departments
-        inquirer.prompt([
-            {
-                type: 'input',
-                message: 'What is the name of the role?',
-                name: 'title',
-            },
-            {
-                type: 'input',
-                message: 'What is the salary of the role?',
-                name: 'salary',
-            },
-            {
-                type: 'input',
-                message: 'What is the department of the role?',
-                name: 'department',
-            }
-        ])
-        .then((answers) =>  methods['convertRoleData'](answers))
-        .catch((err) => console.log(err));
+        // Queries department information to be passed into promptAddRole
+        companyDb.query('SELECT id, name FROM department', (err, results) => {
+            if (err) return console.error(err);
+            const departments = [];
+            results.forEach((item) => departments.push({name: item.name, value: item.id}));
+            methods['promptAddRole'](departments);
+        });
 
     } else {
         // TODO: Add query for roles, and managers 
