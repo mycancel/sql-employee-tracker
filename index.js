@@ -20,7 +20,7 @@ const init = () => {
         { name: 'Add a Department', value: 'promptAddDepart' },
         { name: 'Add a Role', value: 'getDepartments' },
         { name: 'Add an Employee', value: 'getRoles' },
-        { name: 'Updated an Employee', value: 'getEmployees' },
+        { name: 'Update an Employee', value: 'getEmployees' },
         { name: 'Quit', value: 'Quit' }
     ];
     inquirer.prompt([

@@ -13,8 +13,7 @@ VALUES
     ( "Account Manager", 165000, 002 ),
     ( "Legal Team Lead", 255000, 003 ),
     ( "Lawyer", 200000, 003 ),
-    ( "Sales Lead", 110000, 004 ),
-    ( "Salesperson", 85000, 004 );
+    ( "Sales Lead", 110000, 004 );
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES
@@ -27,6 +26,4 @@ VALUES
     ( "Laura", "Thomas", 005, null ),
     ( "Lawrence", "Lawyer", 006, 007 ),
     ( "Lance", "Lee", 006, 007 ),
-    ( "Sal", "Lewis", 007, null ),
-    ( "Sam", "Peters", 007, 010 ),
-    ( "Scott", "Phillips", 007, 010 );
+    ( "Sal", "Lewis", 007, null );
